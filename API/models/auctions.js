@@ -13,7 +13,7 @@ const auctionSchema = new Schema({
     },
     sold : {
         dateSold : {type:Number, default:null},
-        auctionNo : {type:Number, default:null},
+        auctionNo : {type:String, default:null},
         price : {type:Number, default:null},
         buyer : {name:{type:String, default:null}, postCode:{type:String, default:null}}
     },

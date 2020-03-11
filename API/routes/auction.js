@@ -68,6 +68,38 @@ router.post('/updateReListByID', (req,res)=>{
     }
 });
 
+router.post('/updateSoldByID', (req,res)=>{
+    console.log(req.body);
+    if(req.body.id == undefined){
+        res.json({ success:false, message: 'No ID Supplied' });
+    } else {
+        AUCTION.findById(req.body.id).exec(function(err,auction){
+            if (err) {
+                res.status(401).send({ message: 'DB Error : ' + err });
+            } else {
+                if (!auction){
+                    res.json({ success:false, message:'Auctions Not Found.' });
+                } else {
+                    // update auction.sale
+                    auction.status = 2;
+                    auction.sold = {
+                        dateSold:req.body.dateSold,
+                        auctionNo:req.body.auction,
+                        price:req.body.price,
+                        buyer : {name:req.body.name, postCode:req.body.postCode}
+                    }
+                    auction.save((err)=>{
+                        if (err) {
+                            res.status(401).send({ message: 'DB Error : ' + err });
+                        } else {
+                            res.json({ success:true, message :'Auction Updated ......', auction });
+                        }
+                    });
+                }
+            }
+        });
+    }
+});
 router.post('/saveNewAuction', (req,res)=>{
     console.log(req.body);
     if(!req.body.dateListed){
