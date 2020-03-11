@@ -20,7 +20,7 @@ const dbURI = process.env.dbUri || config.uri;
 const auctionRoute = require('./API/routes/auction');
 
 // **** Database Connection
-mongoose.connect(dbURI, {useNewUrlParser: true}, (err) => {
+mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true }, (err) => {
     if (err){
         console.log('DataBase Connection Error :', err);
     } else {

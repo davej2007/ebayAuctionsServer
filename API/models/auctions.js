@@ -3,16 +3,30 @@ const Schema = mongoose.Schema;
 
 const auctionSchema = new Schema({
     status : Number,
-    dateListed : Number,
-    description : String,
-    initialPrice : Number,
-    postagePaid : Number,
     category : {type:Number, default:1},
-    weight : {type:Number, default:0},
-    dateSold : {type:Number, default:0},
-    pricePaid : {type:Number, default:0},
-    buyer : {name:{type:String, default:null}, postCode:{type:String, default:null}},
-    courier : {company:{type:String, default:null}, trackingNo:{type:String, default:null}, cost:{type:Number, default:0}}
+    auction : {
+        dateListed : [Number],
+        description : String,
+        initialPrice : Number,
+        postage : Number,
+        weight : {type:Number, default:0}
+    },
+    sold : {
+        dateSold : {type:Number, default:null},
+        auctionNo : {type:Number, default:null},
+        price : {type:Number, default:null},
+        buyer : {name:{type:String, default:null}, postCode:{type:String, default:null}}
+    },
+    fees :{
+        finalFee : {type:Number, default:0},
+        postageFee : {type:Number, default:0},
+        paypalFee : {type:Number, default:0},
+    },
+    courier : {
+        company:{type:String, default:null},
+        trackingNo:{type:String, default:null},
+        cost:{type:Number, default:0}
+    }
 });
 
 
