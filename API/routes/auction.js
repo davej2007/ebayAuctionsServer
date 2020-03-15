@@ -1,7 +1,6 @@
 const express = require('express');
 const router  = express.Router();
 const AUCTION = require('../models/auctions');
-const config = require('../config/database');
 
 router.get('/test', (req,res) =>{
     res.json({message:'from API / Auth route'});
@@ -38,7 +37,6 @@ router.post('/getAuctionByID', (req,res)=>{
     }
 });
 router.post('/updateReListByID', (req,res)=>{
-    console.log(req.body.id, req.body.date);
     if(req.body.id == undefined){
         res.json({ success:false, message: 'No ID Supplied' });
     } else {
@@ -67,9 +65,7 @@ router.post('/updateReListByID', (req,res)=>{
         });
     }
 });
-
 router.post('/updateSoldByID', (req,res)=>{
-    console.log(req.body);
     if(req.body.id == undefined){
         res.json({ success:false, message: 'No ID Supplied' });
     } else {
@@ -86,8 +82,9 @@ router.post('/updateSoldByID', (req,res)=>{
                         dateSold:req.body.dateSold,
                         auctionNo:req.body.auction,
                         price:req.body.price,
-                        buyer : {name:req.body.name, postCode:req.body.postCode}
+                        buyer : {userName:req.body.userName, postCode:req.body.postCode}
                     }
+                    auction.fees.finalFee = req.body.finalFee;
                     auction.save((err)=>{
                         if (err) {
                             res.status(401).send({ message: 'DB Error : ' + err });
@@ -101,7 +98,6 @@ router.post('/updateSoldByID', (req,res)=>{
     }
 });
 router.post('/updatePaidByID', (req,res)=>{
-    console.log(req.body);
     if(req.body.id == undefined){
         res.json({ success:false, message: 'No ID Supplied' });
     } else {
@@ -116,9 +112,96 @@ router.post('/updatePaidByID', (req,res)=>{
                     auction.status = 3;
                     auction.paid = {
                         paidBy          : req.body.paidBy,
-                        transactionNo   : req.body.paypalTransaction
-                    },
-                    auction.fees.paypalFee = req.body.paypalFee;
+                        transactionNo   : req.body.paypalTransaction,
+                        postage         : req.body.postagePaid
+                    };
+                    if (req.body.paypalFee != null ) auction.fees.paypalFee = req.body.paypalFee;
+                    if (req.body.postageFee != null ) auction.fees.postageFee = req.body.postageFee
+                    auction.save((err)=>{
+                        if (err) {
+                            res.status(401).send({ message: 'DB Error : ' + err });
+                        } else {
+                            res.json({ success:true, message :'Auction Updated ......', auction });
+                        }
+                    });
+                }
+            }
+        });
+    }
+});
+router.post('/updatePostByID', (req,res)=>{
+    if(req.body.id == undefined){
+        res.json({ success:false, message: 'No ID Supplied' });
+    } else {
+        AUCTION.findById(req.body.id).exec(function(err,auction){
+            if (err) {
+                res.status(401).send({ message: 'DB Error : ' + err });
+            } else {
+                if (!auction){
+                    res.json({ success:false, message:'Auctions Not Found.' });
+                } else {
+                    // update auction.courier
+                    auction.status = 4;
+                    auction.courier = {
+                        company         : req.body.company,
+                        trackingNo      : req.body.trackingNo,
+                        cost            : req.body.courierCost
+                    }
+                    auction.sold.buyer.name = req.body.name;
+                    auction.sold.buyer.postCode = req.body.postCode
+                    auction.save((err)=>{
+                        if (err) {
+                            res.status(401).send({ message: 'DB Error : ' + err });
+                        } else {
+                            res.json({ success:true, message :'Auction Updated ......', auction });
+                        }
+                    });
+                }
+            }
+        });
+    }
+});
+router.post('/updateDeliveryByID', (req,res)=>{
+    if(req.body.id == undefined){
+        res.json({ success:false, message: 'No ID Supplied' });
+    } else {
+        AUCTION.findById(req.body.id).exec(function(err,auction){
+            if (err) {
+                res.status(401).send({ message: 'DB Error : ' + err });
+            } else {
+                if (!auction){
+                    res.json({ success:false, message:'Auctions Not Found.' });
+                } else {
+                    // update auction.courier
+                    auction.status = 5;
+                    auction.courier.delivered = req.body.date
+                    auction.save((err)=>{
+                        if (err) {
+                            res.status(401).send({ message: 'DB Error : ' + err });
+                        } else {
+                            res.json({ success:true, message :'Auction Updated ......', auction });
+                        }
+                    });
+                }
+            }
+        });
+    }
+});
+router.post('/updateFeesByID', (req,res)=>{
+    if(req.body.id == undefined){
+        res.json({ success:false, message: 'No ID Supplied' });
+    } else {
+        AUCTION.findById(req.body.id).exec(function(err,auction){
+            if (err) {
+                res.status(401).send({ message: 'DB Error : ' + err });
+            } else {
+                if (!auction){
+                    res.json({ success:false, message:'Auctions Not Found.' });
+                } else {
+                    // update auction.fees
+                    if(req.body.finalFee != null ) auction.fees.finalFee = req.body.finalFee;
+                    if(req.body.postageFee != null ) auction.fees.postageFee = req.body.postageFee;
+                    if(req.body.paypalFee != null ) auction.fees.paypalFee = req.body.paypalFee;
                     auction.save((err)=>{
                         if (err) {
                             res.status(401).send({ message: 'DB Error : ' + err });
@@ -132,7 +215,6 @@ router.post('/updatePaidByID', (req,res)=>{
     }
 });
 router.post('/saveNewAuction', (req,res)=>{
-    console.log(req.body);
     if(!req.body.dateListed){
         res.json({ success:false, message: 'No Date Listed Supplied' });
     } else if(!req.body.description){

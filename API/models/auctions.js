@@ -14,22 +14,27 @@ const auctionSchema = new Schema({
     sold : {
         dateSold        : { type : Number, default:null },
         auctionNo       : { type : String, default:null },
-        price           : { type : Number, default:null },
-        buyer           : { name : { type : String, default : null }, postCode:{ type : String, default : null }}
+        price           : { type : Number, default: 0 },
+        buyer           : { userName : { type : String, default : null },
+                            name : { type : String, default : null },
+                            postCode:{ type : String, default : null }
+                        }
     },
     paid : {
         paidBy          : { type : String, default : null },
+        postage         : { type : Number, default : 0 },
         transactionNo   : { type : String, default : null }
     },
     fees :{
-        finalFee        : {type:Number, default:0},
-        postageFee      : {type:Number, default:0},
-        paypalFee       : {type:Number, default:0},
+        finalFee        : { type : Number, default : 0 },
+        postageFee      : { type : Number, default : 0 },
+        paypalFee       : { type : Number, default : 0 }
     },
     courier : {
-        company         : {type:String, default:null},
-        trackingNo      : {type:String, default:null},
-        cost            : {type:Number, default:0}
+        company         : { type : String, default : null },
+        trackingNo      : { type : String, default : null },
+        cost            : { type : Number, default : 0 },
+        delivered       : { type : Number, default : null }
     }
 });
 
