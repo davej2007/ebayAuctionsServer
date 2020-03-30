@@ -78,6 +78,7 @@ router.post('/updateSoldByID', (req,res)=>{
                 } else {
                     // update auction.sale
                     auction.status = 2;
+                    console.log('Sold On : ',new Date(req.body.dateSold));
                     auction.sold = {
                         dateSold:req.body.dateSold,
                         auctionNo:req.body.auction,
@@ -116,7 +117,8 @@ router.post('/updatePaidByID', (req,res)=>{
                         postage         : req.body.postagePaid
                     };
                     if (req.body.paypalFee != null ) auction.fees.paypalFee = req.body.paypalFee;
-                    if (req.body.postageFee != null ) auction.fees.postageFee = req.body.postageFee
+                    if (req.body.buyerName != null ) auction.sold.buyer.name = req.body.buyerName;
+                    if (req.body.buyerPostCode != null )auction.sold.buyer.postCode = req.body.buyerPostCode
                     auction.save((err)=>{
                         if (err) {
                             res.status(401).send({ message: 'DB Error : ' + err });
@@ -214,6 +216,23 @@ router.post('/updateFeesByID', (req,res)=>{
         });
     }
 });
+router.post('/findEbayAuction', (req,res)=>{
+    if(req.body.auction == undefined){
+        res.json({ success:false, message: 'No Auction Number Supplied' });
+    } else {
+        AUCTION.findOne({'sold.auctionNo' : req.body.auction}).exec(function(err,auction){
+            if (err) {
+                res.status(401).send({ message: 'DB Error : ' + err });
+            } else {
+                if (!auction){
+                    res.json({ success:false, message:'Auctions Number Not Found.' });
+                } else {
+                    res.json({ success:true, message:'Auctions Found.', auction });
+                }
+            }
+        })
+    }
+})
 router.post('/saveNewAuction', (req,res)=>{
     if(!req.body.dateListed){
         res.json({ success:false, message: 'No Date Listed Supplied' });

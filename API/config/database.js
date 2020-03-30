@@ -1,4 +1,4 @@
 module.exports = {
-    uri     :'mongodb://davej:c0mput3r@ds125502.mlab.com:25502/heroku_rf0dn743',
+    uri     :'mongodb://127.0.0.1:27017/mumsEbayAuctions',
     tokenKey:'someSpecialK3y'
 }
