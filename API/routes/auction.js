@@ -6,7 +6,7 @@ router.get('/test', (req,res) =>{
     res.json({message:'from API / Auth route'});
 });
 
-router.post('/getAuctionInfo', (req,res)=>{
+router.get('/getAuctionInfo', (req,res)=>{
     AUCTION.find().exec(function(err,auctions){
         if (err) {
             res.json({ success:false, message:'DB Error : ' + err });
@@ -216,6 +216,54 @@ router.post('/updateFeesByID', (req,res)=>{
         });
     }
 });
+router.post('/updateAuctionbyID', (req,res)=>{
+    if(req.body.auction._id == undefined){
+        res.json({ success:false, message: 'No ID Supplied' });
+    } else {
+        AUCTION.findById(req.body.auction._id).exec(function(err,auction){
+            if (err) {
+                res.status(401).send({ message: 'DB Error : ' + err });
+            } else {
+                if (!auction){
+                    res.json({ success:false, message:'Auctions Not Found.' });
+                } else {
+                    // update auction
+                    console.log(req.body.auction)
+                    auction.status = req.body.auction.status;
+                    auction.category = req.body.auction.category;
+                    auction.auction = { dateListed      : req.body.auction.auction.dateListed,
+                                        description     : req.body.auction.auction.description,
+                                        initialPrice    : req.body.auction.auction.initialPrice,
+                                        postage         : req.body.auction.auction.postage,
+                                        weight          : req.body.auction.auction.weight };
+                    auction.sold = {    dateSold        : req.body.auction.sold.dateSold,
+                                        auctionNo       : req.body.auction.sold.auctionNo,
+                                        price           : req.body.auction.sold.price,
+                                        buyer           : { userName : req.body.auction.sold.buyer.userName,
+                                                            name     : req.body.auction.sold.buyer.name,
+                                                            postCode : req.body.auction.sold.buyer.postCode }};
+                    auction.paid = {    paidBy          : req.body.auction.paid.paidBy,
+                                        postage         : req.body.auction.paid.postage,
+                                        transactionNo   : req.body.auction.paid.transactionNo };
+                    auction.fees = {    finalFee        : req.body.auction.fees.finalFee,
+                                        postageFee      : req.body.auction.fees.postageFee,
+                                        paypalFee       : req.body.auction.fees.paypalFee };
+                    auction.courier ={  company         : req.body.auction.courier.company,
+                                        trackingNo      : req.body.auction.courier.trackingNo,
+                                        cost            : req.body.auction.courier.cost,
+                                        delivered       : req.body.auction.courier.delivered };
+                    auction.save((err)=>{
+                        if (err) {
+                            res.status(401).send({ message: 'DB Error : ' + err });
+                        } else {
+                            res.json({ success:true, message :'Auction Updated ......', auction });
+                        }
+                    });
+                }
+            }
+        });
+    }
+});
 router.post('/findEbayAuction', (req,res)=>{
     if(req.body.auction == undefined){
         res.json({ success:false, message: 'No Auction Number Supplied' });
@@ -232,7 +280,7 @@ router.post('/findEbayAuction', (req,res)=>{
             }
         })
     }
-})
+});
 router.post('/saveNewAuction', (req,res)=>{
     if(!req.body.dateListed){
         res.json({ success:false, message: 'No Date Listed Supplied' });
@@ -264,5 +312,5 @@ router.post('/saveNewAuction', (req,res)=>{
             }
         });
     }
-})
+});
 module.exports = router;

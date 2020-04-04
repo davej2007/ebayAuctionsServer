@@ -17,7 +17,7 @@ const hostname = 'localhost';
 const PORT = 3000;
 const dbURI = process.env.dbUri || config.uri;
 // **** API Routes
-const auctionRoute = require('./API/routes/testData');
+const auctionRoute = require('./API/routes/auction');
 
 // **** Database Connection
 mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true }, (err) => {
