@@ -313,4 +313,22 @@ router.post('/saveNewAuction', (req,res)=>{
         });
     }
 });
+router.post('/convertFees', (req,res)=>{
+    AUCTION.find().exec(function(err,auctions){
+        if (err){
+            res.status(401).json(err);
+        } else {
+            auctions.forEach(entry => {
+                entry.fees = undefined;
+            entry.save((err)=>{
+                if(err) {
+                    console.log(err);
+                }else{
+                    console.log(entry)
+                        }            })
+            })
+            
+        }
+    })
+})
 module.exports = router;

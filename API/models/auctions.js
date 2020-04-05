@@ -25,10 +25,14 @@ const auctionSchema = new Schema({
         postage         : { type : Number, default : 0 },
         transactionNo   : { type : String, default : null }
     },
-    fees : {
-        finalFee        : { type : Number, default : 0 },
-        postageFee      : { type : Number, default : 0 },
-        paypalFee       : { type : Number, default : 0 }
+    fee : {
+        finalFee        : { cost  : { type : Number, default : null },
+                            promo : { type : Boolean, default : false },
+                            set   : { type : Boolean, default : false }},
+        postageFee      : { cost  : { type : Number, default : null },
+                            set   : { type : Boolean, default : false }},
+        paypalFee       : { cost  : { type : Number, default : null },
+                            set   : { type : Boolean, default : false }},
     },
     courier : {
         company         : { type : String, default : null },
