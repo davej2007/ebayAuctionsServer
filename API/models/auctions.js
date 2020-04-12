@@ -22,25 +22,28 @@ const auctionSchema = new Schema({
     },
     paid : {
         paidBy          : { type : String, default : null },
-        postage         : { type : Number, default : 0 },
-        transactionNo   : { type : String, default : null }
+        postage         : { type : Number, default : 0    },
+        transactionNo   : { type : String, default : null },
+        completed       : { type : Boolean, default: false}
     },
     fee : {
         finalFee        : { cost  : { type : Number, default : null },
                             promo : { type : Boolean, default : false },
-                            set   : { type : Boolean, default : false }},
+                            set   : { type : Boolean, default : false },
+                            completed : { type : Boolean, default: false }},
         postageFee      : { cost  : { type : Number, default : null },
-                            set   : { type : Boolean, default : false }},
+                            set   : { type : Boolean, default : false },
+                            completed : { type : Boolean, default: false }},
         paypalFee       : { cost  : { type : Number, default : null },
-                            set   : { type : Boolean, default : false }},
+                            set   : { type : Boolean, default : false },
+                            completed : { type : Boolean, default: false }}
     },
     courier : {
         company         : { type : String, default : null },
         trackingNo      : { type : String, default : null },
         cost            : { type : Number, default : 0 },
         delivered       : { type : Number, default : null }
-    }
+    },
+    archive             : { type : Boolean, default: false }
 });
-
-
 module.exports = mongoose.model('Auction',auctionSchema);
