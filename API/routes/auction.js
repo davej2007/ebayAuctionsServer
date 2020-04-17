@@ -1,6 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const AUCTION = require('../models/auctions');
+const fs = require('fs');
 
 router.get('/test', (req,res) =>{
     res.json({message:'from API / Auth route'});

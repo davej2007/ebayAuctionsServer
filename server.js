@@ -15,11 +15,12 @@ const server = http.createServer(app);
 // **** Port Variables
 const hostname = 'localhost';
 const PORT = 3000;
-const dbURI = process.env.dbUri || config.uri;
+const dbURI = process.env.dbUri || config.mlab;
 // **** API Routes
 const auctionRoute = require('./API/routes/auction');
 
 // **** Database Connection
+
 mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true }, (err) => {
     if (err){
         console.log('DataBase Connection Error :', err);
@@ -27,6 +28,7 @@ mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true }, (er
         console.log('Successfully Connected to Database : ',dbURI);
     }
 });
+
 
 // **** Middleware 
 app.use(cors());
@@ -44,7 +46,6 @@ app.use(function (req, res, next) {
 });
 // **** Router routes
 app.use('/api/auctions', auctionRoute);
-
 // **** Main routes
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/index.html'));
